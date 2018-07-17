@@ -1,0 +1,11 @@
+# json
+./*.json
+
+# cover profiles
+*.out
+
+# storage
+cmd/daemon/mocks/storage/
+
+# binary
+cmd/daemon/daemon

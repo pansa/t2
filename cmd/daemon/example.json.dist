@@ -1,0 +1,25 @@
+{
+  "host": "127.0.0.1",
+  "port": 8080,
+  "storage": {
+    "path": "cmd/daemon/mocks/storage/",
+    "max_size": 10000000,
+    "limit": 10000000000
+  },
+  "redis": {
+    "host": "127.0.0.1",
+    "port": 6379
+  },
+  "rate_limit": {
+    "max_connections_from_ip": 5,
+    "rps": {
+      "download": 5,
+      "upload": 3,
+      "remove": 3
+    },
+    "bandwidth": {
+      "download": 100000000,
+      "upload": 100000000
+    }
+  }
+}

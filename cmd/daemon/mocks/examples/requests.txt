@@ -1,0 +1,148 @@
+1) File upload
+
+Success request with checksums:
+
+curl -F 'file=@./cmd/daemon/mocks/files/small.txt' -F 'md5=faba42af9c66e079f12e1f160b34744c' -F 'sha1=30209f556027193b730e3c8ea8c4f581234fcdef' -F 'sha256=b4373779db9de9f4782f1d878c5468b24c2d8110d3b322602c0322f486223f0c' 'http://127.0.0.1:8080/files' -v
+*   Trying 127.0.0.1...
+* TCP_NODELAY set
+* Connected to 127.0.0.1 (127.0.0.1) port 8080 (#0)
+> POST /files HTTP/1.1
+> Host: 127.0.0.1:8080
+> User-Agent: curl/7.54.0
+> Accept: */*
+> Content-Length: 625
+> Expect: 100-continue
+> Content-Type: multipart/form-data; boundary=------------------------8ef3485a925ddde4
+> 
+< HTTP/1.1 100 Continue
+< HTTP/1.1 200 OK
+< Content-Type: application/json
+< Date: Tue, 17 Jul 2018 09:46:47 GMT
+< Content-Length: 93
+< 
+* Connection #0 to host 127.0.0.1 left intact
+{"hash":"b4373779db9de9f4782f1d878c5468b24c2d8110d3b322602c0322f486223f0c-1531820807-192738"}
+
+Example of error request:
+
+curl -F 'file=@./cmd/daemon/mocks/files/small.txt' -F 'md5=1faba42af9c66e079f12e1f160b34744c' 'http://127.0.0.1:8080/files' -v
+*   Trying 127.0.0.1...
+* TCP_NODELAY set
+* Connected to 127.0.0.1 (127.0.0.1) port 8080 (#0)
+> POST /files HTTP/1.1
+> Host: 127.0.0.1:8080
+> User-Agent: curl/7.54.0
+> Accept: */*
+> Content-Length: 334
+> Expect: 100-continue
+> Content-Type: multipart/form-data; boundary=------------------------33d8dfd72572d574
+> 
+< HTTP/1.1 100 Continue
+< HTTP/1.1 400 Bad Request
+< Content-Type: application/json
+< Date: Tue, 17 Jul 2018 09:46:57 GMT
+< Content-Length: 19
+* HTTP error before end of send, stop sending
+< 
+* Closing connection 0
+{"error":"BAD_MD5"}
+
+2) File download
+
+Success request:
+
+curl -XGET 'http://127.0.0.1:8080/files/b4373779db9de9f4782f1d878c5468b24c2d8110d3b322602c0322f486223f0c-1531820807-192738' -v
+Note: Unnecessary use of -X or --request, GET is already inferred.
+*   Trying 127.0.0.1...
+* TCP_NODELAY set
+* Connected to 127.0.0.1 (127.0.0.1) port 8080 (#0)
+> GET /files/b4373779db9de9f4782f1d878c5468b24c2d8110d3b322602c0322f486223f0c-1531820807-192738 HTTP/1.1
+> Host: 127.0.0.1:8080
+> User-Agent: curl/7.54.0
+> Accept: */*
+> 
+< HTTP/1.1 200 OK
+< Content-Disposition: attachment; filename=b4373779db9de9f4782f1d878c5468b24c2d8110d3b322602c0322f486223f0c-1531820807-192738
+< Date: Tue, 17 Jul 2018 09:47:51 GMT
+< Content-Length: 22
+< Content-Type: text/plain; charset=utf-8
+< 
+Example
+ExampleExample
+
+Error request:
+
+curl -XGET 'http://127.0.0.1:8080/files/b4373779db9de9f4782f1d878c5468b24c2d8110d3b322602c0322f486223f0c-1531820807-192738123' -v
+Note: Unnecessary use of -X or --request, GET is already inferred.
+*   Trying 127.0.0.1...
+* TCP_NODELAY set
+* Connected to 127.0.0.1 (127.0.0.1) port 8080 (#0)
+> GET /files/b4373779db9de9f4782f1d878c5468b24c2d8110d3b322602c0322f486223f0c-1531820807-192738123 HTTP/1.1
+> Host: 127.0.0.1:8080
+> User-Agent: curl/7.54.0
+> Accept: */*
+> 
+< HTTP/1.1 404 Not Found
+< Content-Type: application/json
+< Date: Tue, 17 Jul 2018 09:48:30 GMT
+< Content-Length: 26
+< 
+* Connection #0 to host 127.0.0.1 left intact
+{"error":"FILE_NOT_FOUND"}
+
+3) File remove
+
+Success request:
+
+curl -XDELETE 'http://127.0.0.1:8080/files/b4373779db9de9f4782f1d878c5468b24c2d8110d3b322602c0322f486223f0c-1531820807-192738' -v
+*   Trying 127.0.0.1...
+* TCP_NODELAY set
+* Connected to 127.0.0.1 (127.0.0.1) port 8080 (#0)
+> DELETE /files/b4373779db9de9f4782f1d878c5468b24c2d8110d3b322602c0322f486223f0c-1531820807-192738 HTTP/1.1
+> Host: 127.0.0.1:8080
+> User-Agent: curl/7.54.0
+> Accept: */*
+> 
+< HTTP/1.1 204 No Content
+< Date: Tue, 17 Jul 2018 09:49:28 GMT
+< 
+* Connection #0 to host 127.0.0.1 left intact
+
+Error request:
+
+curl -XDELETE 'http://127.0.0.1:8080/files/b4373779db9de9f4782f1d878c5468b24c2d8110d3b322602c0322f486223f0c-1531820807-192738' -v
+*   Trying 127.0.0.1...
+* TCP_NODELAY set
+* Connected to 127.0.0.1 (127.0.0.1) port 8080 (#0)
+> DELETE /files/b4373779db9de9f4782f1d878c5468b24c2d8110d3b322602c0322f486223f0c-1531820807-192738 HTTP/1.1
+> Host: 127.0.0.1:8080
+> User-Agent: curl/7.54.0
+> Accept: */*
+> 
+< HTTP/1.1 404 Not Found
+< Content-Type: application/json
+< Date: Tue, 17 Jul 2018 09:49:56 GMT
+< Content-Length: 26
+< 
+* Connection #0 to host 127.0.0.1 left intact
+{"error":"FILE_NOT_FOUND"}
+
+4) 404 Handling
+
+curl -XGET 'http://127.0.0.1:8080/' -v
+Note: Unnecessary use of -X or --request, GET is already inferred.
+*   Trying 127.0.0.1...
+* TCP_NODELAY set
+* Connected to 127.0.0.1 (127.0.0.1) port 8080 (#0)
+> GET / HTTP/1.1
+> Host: 127.0.0.1:8080
+> User-Agent: curl/7.54.0
+> Accept: */*
+> 
+< HTTP/1.1 404 Not Found
+< Content-Type: application/json
+< Date: Tue, 17 Jul 2018 09:50:14 GMT
+< Content-Length: 21
+< 
+* Connection #0 to host 127.0.0.1 left intact
+{"error":"NOT_FOUND"}

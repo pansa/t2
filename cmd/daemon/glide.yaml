@@ -1,0 +1,5 @@
+package: github.com/test/drweb
+import:
+- package: github.com/garyburd/redigo
+  subpackages:
+  - redis
